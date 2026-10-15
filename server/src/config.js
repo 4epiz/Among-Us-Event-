@@ -42,7 +42,7 @@ export function loadConfig() {
   return {
     ...loadDbConfig(),
     port: Number(process.env.PORT) || 4000,
-    FRONTEND_DOMAIN: FRONTEND_DOMAIN,
+    FRONTEND_DOMAIN: process.env.FRONTEND_DOMAIN,
     sessionSecret,
     sessionHours: Number(process.env.SESSION_HOURS) || 8,
     registrationOpen: process.env.REGISTRATION_OPEN !== "false",
