@@ -25,3 +25,8 @@ dist-ssr
 
 # Local AI prompts and design reference files
 /ai-prompt/
+
+# Environment files (secrets). Commit only the examples.
+.env
+.env.*
+!.env.example

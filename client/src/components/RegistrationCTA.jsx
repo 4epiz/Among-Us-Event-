@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { event } from "../data/eventData";
+import { Link } from "../lib/router";
 
 export default function RegistrationCTA() {
   const url = event.registrationUrl;
@@ -11,7 +12,7 @@ export default function RegistrationCTA() {
     status === "closed"
       ? "Registration has closed for this event."
       : available
-        ? "You'll finish signing up on the registration page."
+        ? "It takes about a minute. Organisers review every registration."
         : "Registration opens soon. The link will appear here.";
 
   return (
@@ -26,7 +27,11 @@ export default function RegistrationCTA() {
               Save your place in a lobby. Sign up on your own or bring your crew along.
             </p>
             <div className="register__actions">
-              {available ? (
+              {available && !external ? (
+                <Link className="btn btn--primary" to={url}>
+                  Register for the Event
+                </Link>
+              ) : available ? (
                 <motion.a
                   className="btn btn--primary"
                   href={url}

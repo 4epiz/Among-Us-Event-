@@ -1,0 +1,26 @@
+{
+  "name": "zero-trust-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Express API for event registrations and the admin dashboard, on Supabase Postgres.",
+  "engines": {
+    "node": ">=20.6"
+  },
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/index.js",
+    "start": "node --env-file=.env src/index.js",
+    "db:setup": "node --env-file=.env scripts/setup-db.js",
+    "create-admin": "node --env-file=.env scripts/create-admin.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3"
+  }
+}

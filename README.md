@@ -1,37 +1,100 @@
-# Zero Trust — Among Us community event site
+# Zero Trust — Among Us community event
 
-Vite + React + Framer Motion + Lucide React.
-
-## Run
-
-```bash
-bun install
-bun run dev
-bun --bun run build
+```
+among-us-event/
+├── client/   Vite + React site: home page, /register, /admin
+└── server/   Express API: registrations and admin login, on Supabase Postgres
 ```
 
-## Editing event content
+## 1. Get your database connection string
 
-All event content lives in `src/data/eventData.js`:
+The server connects straight to your Supabase Postgres database. It only needs one
+value from Supabase: the connection string.
 
-- `event.details` — date, start time, time zone, venue/server, slots, registration status (`"open" | "soon" | "closed"`). Anything left `null` shows as "To be announced".
-- `event.registrationUrl` — the final registration button stays disabled until this is set **and** status is `"open"`. Header and hero buttons always scroll to the registration section.
-- `event.communityUrl` — Discord/community link. Shown in the FAQ intro and footer only when set.
-- `event.startsAt` — ISO date-time with offset (e.g. `"2026-11-22T19:00:00+05:30"`) that drives the live countdown. While `null`, the countdown shows a "date not announced" state.
-- `schedule[].time` — `null` shows "TBA".
-- `roles`, `maps`, `rules`, `prepTasks`, `tickerItems`, `gameFacts` — content for those sections.
-- `meeting` — the Emergency Meeting puzzle: suspects, their statements, the impostor and the explanation. Change these to write your own puzzle.
-- `backgrounds` — the three hero scenes in order, with per-scene focal points (`position`, `mobilePosition`) and text-contrast scrim strength (`scrim`, `scrimMobile`).
+1. In the Supabase dashboard, click **Connect** in the top bar.
+2. Choose **Session pooler** and copy the URI. It looks like
+   `postgresql://postgres.abcdefgh:[YOUR-PASSWORD]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres`
+3. Replace `[YOUR-PASSWORD]` with your database password (reset it under
+   **Project Settings → Database** if you don't have it). If the password has special
+   characters like `@ : / ? # %`, URL-encode them.
 
-## Notes
+## 2. Configure and start the server
 
-- Background art lives in `public/` under its original filenames. `ai-prompt/` holds local design references only and is git-ignored.
-- Motion respects `prefers-reduced-motion`: the hero starts paused, zoom is disabled, and section reveals are skipped.
-- The hero background can be paused or switched with the scene controls at the bottom right.
+```bash
+cd server
+cp .env.example .env               # paste DATABASE_URL, set SESSION_SECRET
+npm install
+npm run db:setup                   # creates the tables (safe to run again)
+npm run create-admin -- yourname   # asks for a password (min 12 characters)
+npm run dev                        # API on http://localhost:4000
+```
 
-## Interactive pieces
+Generate a `SESSION_SECRET` with:
 
-- **Ejection intro** (`src/components/EjectIntro.jsx`) — doubles as the loading screen. A crewmate cut from the supplied portrait art (`public/intro-crewmate.png`) tumbles across space along the welcome line, and "Welcome to Zero Trust." is uncovered right behind it as it passes. It flies right to left; set `DIRECTION` to `1` in the file to fly left to right instead. It waits for the hero images and fonts, gives up waiting after 9s, and can be skipped with the Skip button. Edit `headline` and `subline` at the top of the file to change the text.
-- **Emergency Meeting** — a playable deduction puzzle with vote counting and an ejection screen.
-- **Before you board** — a pre-event checklist; progress is saved in the visitor's browser.
-- **Sabotage the lights** — the footer button darkens the page except for a circle around the pointer. Escape, the Fix button, or a 20-second timer restores it.
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+```
+
+Run `npm run create-admin -- <username>` again any time to add another admin or reset a password.
+
+## 3. Start the client
+
+```bash
+cd client
+npm install
+npm run dev                        # http://localhost:5173, proxies /api to the server
+```
+
+- `/` — the event site
+- `/register` — the registration form
+- `/admin` — admin sign-in and the registrations dashboard
+
+## Deploying
+
+Build the client, then let the Express server serve it, so the site and API share one origin
+(the admin cookie needs this):
+
+```bash
+cd client && npm run build      # creates client/dist
+cd ../server && NODE_ENV=production npm start
+```
+
+The server serves `client/dist` automatically when it exists. In production set
+`NODE_ENV=production` (HTTPS-only cookies), and `TRUST_PROXY=1` if you're behind a proxy or
+on a host like Render or Railway.
+
+## API
+
+| Method | Path | Who | What |
+|---|---|---|---|
+| GET | `/api/registrations/status` | Anyone | Whether registration is open |
+| POST | `/api/registrations` | Anyone | Submit a registration (10 per hour per IP) |
+| POST | `/api/admin/login` | Anyone | Sign in (10 failed tries per 15 min per IP) |
+| POST | `/api/admin/logout` | Admin | Sign out |
+| GET | `/api/admin/me` | Admin | Current admin |
+| GET | `/api/admin/registrations` | Admin | List with `status`, `q`, `page`, `limit`, plus counts |
+| PATCH | `/api/admin/registrations/:id` | Admin | Set `status` (pending/accepted/rejected) and `adminNote` |
+
+## Security notes
+
+- The server talks to Postgres directly with parameterised queries (`pg`). The tables keep
+  Row Level Security on with no policies, so Supabase's public REST API can't reach them.
+- The database connection is SSL-encrypted. To also verify Supabase's certificate, download
+  it from **Project Settings → Database** and set `DATABASE_CA_CERT` in `.env`.
+- Admin passwords are stored only as bcrypt hashes. Sign-in sets a signed, httpOnly,
+  `SameSite=Strict` cookie; the browser never sees a token.
+- A wrong username and a wrong password get the same error and take the same time.
+- Each email can register once. A hidden honeypot field quietly drops simple bots.
+- No emails are sent to applicants. Accepting or rejecting only changes the status.
+
+## Tests
+
+```bash
+cd server && npm test
+```
+
+Runs the registration and admin handlers against an in-memory database. No database
+connection or network access is needed.
+
+Site content (event details, roles, maps, FAQ, the intro text) is documented in
+`client/README.md`.

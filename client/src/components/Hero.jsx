@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDown, ArrowRight, Pause, Play } from "lucide-react";
 import AnimatedBackground, { SCENE_MS } from "./AnimatedBackground";
+import { Link } from "../lib/router";
 import { backgrounds } from "../data/eventData";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -78,14 +79,10 @@ export default function Hero({ ready = true }) {
             built for strategy, teamwork, and unforgettable moments.
           </motion.p>
           <motion.div className="hero__actions" {...enter(0.9)}>
-            <motion.a
-              className="btn btn--primary"
-              href="#register"
-              whileTap={{ scale: 0.97 }}
-            >
+            <Link className="btn btn--primary" to="/register">
               Register for the Event
               <ArrowRight className="btn__arrow" size={18} strokeWidth={2} aria-hidden="true" />
-            </motion.a>
+            </Link>
             <motion.a className="btn btn--ghost" href="#about" whileTap={{ scale: 0.97 }}>
               Explore Event
             </motion.a>

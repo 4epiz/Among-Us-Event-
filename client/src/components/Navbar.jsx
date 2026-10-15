@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { navLinks } from "../data/eventData";
 import Wordmark from "./Wordmark";
+import { Link } from "../lib/router";
 
 function useActiveSection(ids) {
   const [active, setActive] = useState(ids[0]);
@@ -90,13 +91,9 @@ export default function Navbar() {
           </nav>
 
           <div className="nav__actions">
-            <motion.a
-              className="btn btn--primary btn--sm nav__register"
-              href="#register"
-              whileTap={{ scale: 0.97 }}
-            >
+            <Link className="btn btn--primary btn--sm nav__register" to="/register">
               Register Now
-            </motion.a>
+            </Link>
             <button
               ref={toggleRef}
               type="button"
@@ -145,9 +142,9 @@ export default function Navbar() {
                 ))}
               </motion.ul>
             </nav>
-            <a className="btn btn--primary" href="#register" onClick={close}>
+            <Link className="btn btn--primary" to="/register" onClick={close}>
               Register Now
-            </a>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
