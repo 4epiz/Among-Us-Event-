@@ -21,16 +21,16 @@ export const event = {
 
   // Exact start, used by the countdown. ISO 8601 with offset, e.g. "2026-11-22T19:00:00+05:30".
   // While null, the countdown shows a "date not announced" state.
-  startsAt: null,
+  startsAt: "2026-11-22T19:00:00+05:30",
 
   details: {
-    date: null, // e.g. "Saturday, 22 November 2026"
-    startTime: null, // e.g. "7:00 PM"
-    timeZone: null, // e.g. "IST (UTC+05:30)"
-    venue: null, // e.g. "Online — private lobbies on Asia servers"
-    slots: null, // e.g. "60 players · 6 lobbies"
+    date: "Saturday, 22 November 2026",
+    startTime: "7:00 PM",
+    timeZone: "IST (UTC+05:30)",
+    venue: "Online — private lobbies on Asia servers",
+    slots: "60 players · 6 lobbies",
     // "open" | "closed" | "soon"
-    registrationStatus: "soon",
+    registrationStatus: "open",
   },
 };
 
@@ -47,7 +47,6 @@ export const navLinks = [
 export const backgrounds = [
   {
     src: "/1792072994516_background_image_1.png",
-    label: "Crew in open space",
     layout: "cover",
     position: "50% 62%",
     mobilePosition: "54% 70%",
@@ -56,7 +55,6 @@ export const backgrounds = [
   },
   {
     src: "/1792072994516_background_image_2.png",
-    label: "Red crewmate",
     layout: "portrait",
     position: "50% 40%",
     mobilePosition: "50% 38%",
@@ -65,7 +63,6 @@ export const backgrounds = [
   },
   {
     src: "/1792072994515_background_image_3.png",
-    label: "Ship interior",
     layout: "cover",
     position: "55% 50%",
     mobilePosition: "40% 50%",
@@ -95,27 +92,27 @@ export const steps = [
 
 export const schedule = [
   {
-    time: null,
+    time: "17:30",
     title: "Registration and lobby setup",
     body: "Check in, confirm your in-game name, and get your lobby code.",
   },
   {
-    time: null,
+    time: "18:00",
     title: "Crew briefing",
     body: "Rules, map rotation, voting etiquette, and how disconnects are handled.",
   },
   {
-    time: null,
+    time: "18:15",
     title: "Main matches",
     body: "Rotating rounds across lobbies. Your best results carry forward.",
   },
   {
-    time: null,
+    time: "19:00",
     title: "Final round",
     body: "The top players from each lobby meet in a single deciding match.",
   },
   {
-    time: null,
+    time: "20:00",
     title: "Results and closing",
     body: "Standings, highlights from the night, and a thank-you to every crew.",
   },
@@ -360,3 +357,4 @@ export const faqs = [
     a: "Let the organisers know as early as you can. If a spot opens in a later round, we'll do our best to place you, but late arrivals can't be guaranteed a seat.",
   },
 ];
+  
