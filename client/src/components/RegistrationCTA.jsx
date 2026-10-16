@@ -1,19 +1,16 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { event } from "../data/eventData";
 import { Link } from "../lib/router";
+import { useRegistrationOpen } from "../lib/useRegistrationOpen";
 
 export default function RegistrationCTA() {
-  const url = event.registrationUrl;
-  const external = Boolean(url) && /^https?:\/\//.test(url);
-  const status = event.details.registrationStatus;
-  const available = Boolean(url) && status === "open";
-  const meta =
-    status === "closed"
-      ? "Registration has closed for this event."
-      : available
-        ? "It takes about a minute. Organisers review every registration."
-        : "Registration opens soon. The link will appear here.";
+  const url = event.registrationUrl || "/register";
+  const external = /^https?:\/\//.test(url);
+  const serverOpen = useRegistrationOpen();
+  const available = external || serverOpen !== false;
+  const meta = available
+    ? "It takes about a minute. Organisers review every registration."
+    : "Registration is closed right now. Check back for updates.";
 
   return (
     <section id="register" className="section" aria-labelledby="register-title">

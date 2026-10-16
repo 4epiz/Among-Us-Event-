@@ -2,22 +2,25 @@ import { CalendarDays, Clock, Globe2, Server, Ticket, Users } from "lucide-react
 import Reveal from "./Reveal";
 import Countdown from "./Countdown";
 import { event, TBA } from "../data/eventData";
+import { useRegistrationOpen } from "../lib/useRegistrationOpen";
 
 const statusLabel = {
   open: "Registration open",
-  soon: "Registration opens soon",
+  soon: "Checking…",
   closed: "Registration closed",
 };
 
 export default function EventDetails() {
   const d = event.details;
+  const open = useRegistrationOpen();
+  const regStatus = open === null ? "soon" : open === undefined ? null : open ? "open" : "closed";
   const items = [
     { label: "Date", value: d.date, Icon: CalendarDays },
     { label: "Start time", value: d.startTime, Icon: Clock },
     { label: "Time zone", value: d.timeZone, Icon: Globe2 },
     { label: "Venue or server", value: d.venue, Icon: Server },
     { label: "Available slots", value: d.slots, Icon: Users },
-    { label: "Registration", value: statusLabel[d.registrationStatus], Icon: Ticket, status: d.registrationStatus },
+    { label: "Registration", value: regStatus ? statusLabel[regStatus] : null, Icon: Ticket, status: regStatus ?? undefined },
   ];
 
   return (

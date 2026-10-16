@@ -6,6 +6,7 @@ import Spinner from "../components/Spinner";
 import { Link, usePageMeta } from "../lib/router";
 import { api } from "../lib/api";
 import { event, rules, TBA } from "../data/eventData";
+import { useRegistrationOpen } from "../lib/useRegistrationOpen";
 
 const PLATFORMS = [
   { value: "pc", label: "PC" },
@@ -80,15 +81,11 @@ export default function Register() {
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(null);
-  const [open, setOpen] = useState(null); // null = checking
-  const formErrorRef = useRef(null);
+  const serverOpen = useRegistrationOpen();
+  const [closedOnSubmit, setClosedOnSubmit] = useState(false);
+  const open = closedOnSubmit ? false : serverOpen;  const formErrorRef = useRef(null);
   const successRef = useRef(null);
 
-  useEffect(() => {
-    api("/registrations/status")
-      .then((d) => setOpen(d.open))
-      .catch(() => setOpen(true)); // if the check fails, let the submit report the real error
-  }, []);
 
   useEffect(() => {
     if (done) successRef.current?.focus();
@@ -121,7 +118,7 @@ export default function Register() {
       setDone({ inGameName: res.registration?.inGameName ?? form.inGameName.trim() });
     } catch (err) {
       if (err.fields) setErrors(err.fields);
-      if (err.status === 403) setOpen(false);
+      if (err.status === 403) setClosedOnSubmit(true);
       setFormError(err.message);
       requestAnimationFrame(() => formErrorRef.current?.focus());
     } finally {
