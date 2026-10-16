@@ -25,7 +25,14 @@ export async function api(path, { method = "GET", body, signal } = {}) {
     if (err.name === "AbortError") throw err;
     throw new ApiError("Can't reach the server. Check your connection and try again.");
   }
-
+  if (!(res.headers.get("content-type") || "").includes("application/json")) {
+    throw new ApiError(
+      res.status === 405
+        ? "The registration server isn't connected yet (405). Please try again later."
+        : "The registration server isn't responding properly. Please try again later.",
+      { status: res.status || 502 }
+    );
+  }
   let data = null;
   try {
     data = await res.json();
