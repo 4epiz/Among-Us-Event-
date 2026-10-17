@@ -43,9 +43,6 @@ export default function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <p>
-            © {year} {event.name}. A fan-organised community event.
-          </p>
           <p>Not affiliated with or endorsed by Innersloth. Among Us is a trademark of Innersloth LLC.</p>
         </div>
       </div>
